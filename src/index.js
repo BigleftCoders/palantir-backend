@@ -1,7 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-
 require("dotenv").config();
+
+const passportSetup = require("./config/passport");
 
 const auth = require("./api/auth");
 
