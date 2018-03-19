@@ -1,49 +1,29 @@
-import { Router } from 'express'
-import { login } from './controller'
-import { password, master, facebook, google } from '../../services/passport'
+const { Router } = require("express");
+const passport = require("passport");
 
-const router = new Router()
+const router = Router();
 
-/**
- * @api {post} /auth Authenticate
- * @apiName Authenticate
- * @apiGroup Auth
- * @apiPermission master
- * @apiHeader {String} Authorization Basic authorization with email and password.
- * @apiParam {String} access_token Master access_token.
- * @apiSuccess (Success 201) {String} token User `access_token` to be passed to other requests.
- * @apiSuccess (Success 201) {Object} user Current user's data.
- * @apiError 401 Master access only or invalid credentials.
- */
-router.post('/',
-  master(),
-  password(),
-  login)
+console.log(process.env.GOOGLE_CLIENT_ID);
 
-/**
- * @api {post} /auth/facebook Authenticate with Facebook
- * @apiName AuthenticateFacebook
- * @apiGroup Auth
- * @apiParam {String} access_token Facebook user accessToken.
- * @apiSuccess (Success 201) {String} token User `access_token` to be passed to other requests.
- * @apiSuccess (Success 201) {Object} user Current user's data.
- * @apiError 401 Invalid credentials.
- */
-router.post('/facebook',
-  facebook(),
-  login)
+router.get("/test", (req, res) => {
+  res.send(req);
+});
 
-/**
- * @api {post} /auth/google Authenticate with Google
- * @apiName AuthenticateGoogle
- * @apiGroup Auth
- * @apiParam {String} access_token Google user accessToken.
- * @apiSuccess (Success 201) {String} token User `access_token` to be passed to other requests.
- * @apiSuccess (Success 201) {Object} user Current user's data.
- * @apiError 401 Invalid credentials.
- */
-router.post('/google',
-  google(),
-  login)
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile"] })
+  // passport.authenticate("google", {
+  //   scope: ["https://www.googleapis.com/auth/plus.login"]
+  // })
+);
 
-export default router
+// GET /auth/google/callback
+//   Use passport.authenticate() as route middleware to authenticate the
+//   request.  If authentication fails, the user will be redirected back to the
+//   login page.  Otherwise, the primary route function function will be called,
+//   which, in this example, will redirect the user to the home page.
+router.get("/google/callback", passport.authenticate("google"), (req, res) => {
+  res.send("reached");
+});
+
+module.exports = router;
