@@ -1,20 +1,29 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-require("dotenv").config();
-const cors = require("cors");
+const passport = require("passport");
 
 // eslint-disable-next-line
-const passportSetup = require("./config/passport");
+const MongoClient = require("mongodb").MongoClient;
+require("dotenv").config();
+const cors = require("cors");
+const mongooseSetup = require("./services/mongoose");
+
+mongooseSetup.setUpConnection();
+
+// eslint-disable-next-line
+const passportSetup = require("./services/passport");
 
 const auth = require("./api/auth");
 
 const app = express();
+
 app.use(
   cors({
     origin: ["http://localhost:3000"]
   })
 );
-
+app.use(passport.initialize());
+// app.use(passport.session());
 app.use(bodyParser());
 app.use("/auth", auth);
 
