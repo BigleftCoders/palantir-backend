@@ -19,10 +19,13 @@
   },
   "homepage": "https://github.com/BigleftCoders/palantir-backend#readme",
   "dependencies": {
+    "@types/mongoose": "^5.0.7",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
+    "mongodb": "^3.0.4",
+    "mongoose": "^5.0.11",
     "passport": "^0.4.0",
     "passport-google-oauth": "^1.0.0"
   },
