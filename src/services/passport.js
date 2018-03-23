@@ -1,23 +1,37 @@
-const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
-const User = require("../api/auth/models/user");
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const mongoose = require('mongoose');
+
+require('../api/auth/models/user');
+const User = mongoose.model('User');
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
 
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/callback"
+      callbackURL: 'http://localhost:3000/auth/google/callback'
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        console.log("=================");
-        console.log("accessToken", accessToken);
-        console.log("=================");
+        console.log('=================');
+        console.log('accessToken', accessToken);
+        console.log('=================');
         console.log(profile);
+        console.log('=================');
+
         const foundedUser = User.findOne({
           googleId: profile.id
         });
+
         if (foundedUser) {
           done(null, foundedUser);
         } else {
