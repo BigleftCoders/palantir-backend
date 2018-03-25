@@ -1,17 +1,16 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const passport = require("passport");
-
-// eslint-disable-next-line
-const MongoClient = require("mongodb").MongoClient;
-require("dotenv").config();
 const cors = require("cors");
-const mongooseSetup = require("./services/mongoose");
 
-mongooseSetup.setUpConnection();
+require("dotenv").config();
+
+const mongooseSetup = require("./services/mongoose");
 
 // eslint-disable-next-line
 const passportSetup = require("./services/passport");
+
+mongooseSetup.setUpConnection();
 
 const auth = require("./api/auth");
 
