@@ -7,11 +7,19 @@ require("../api/auth/models/user");
 const User = mongoose.model("User");
 
 passport.serializeUser((user, done) => {
-  done(null, user);
+  console.log("serializeUSer", user, user.id);
+  done(null, user.id);
 });
 
-passport.deserializeUser((user, done) => {
-  done(null, user);
+passport.deserializeUser(async (id, done) => {
+  try {
+    console.log("deserializeUSer", id);
+    const user = await User.findById(id);
+    console.log("deserializeUser", user);
+    done(null, user);
+  } catch (error) {
+    done(error);
+  }
 });
 
 passport.use(
@@ -23,11 +31,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // console.log("=================");
-        // console.log("accessToken", accessToken);
-        // console.log("=================");
-        console.log(profile);
-        // console.log("=================");
+        console.log("accessToken", accessToken, "refreshTOken", refreshToken);
         const foundedUser = await User.findOne({
           googleId: profile.id
         });
@@ -37,20 +41,13 @@ passport.use(
         } else {
           const created = await new User({
             googleId: profile.id,
-            firstName: profile.name.givenName,
-            lastName: profile.name.familyName
+            displayName: profile.displayName
           }).save();
-          console.log("created", created);
           done(null, created);
         }
       } catch (error) {
         throw error;
       }
-
-      // User.findOrCreate({ googleId: profile.id }, (err, user) =>
-      //   done(err, user)
-      // );
-      // done(null, profile);
     }
   )
 );

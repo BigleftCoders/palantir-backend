@@ -10,13 +10,8 @@ const userSchema = new mongoose.Schema({
     type: Number,
     unique: true
   },
-  firstName: {
-    type: String,
-    required: true
-  },
-  lastName: {
-    type: String,
-    required: true
+  displayName: {
+    type: String
   }
   // TODO: add email
 });
