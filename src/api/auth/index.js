@@ -5,7 +5,9 @@ const router = Router();
 const { formatUserRes, checkAuth } = require("./utils");
 
 router.get("/test", (req, res) => {
-  res.send(req);
+  res.send({
+    test: "message"
+  });
 });
 
 router.get("/google", passport.authenticate("google", { scope: ["profile"] }));

@@ -4,6 +4,8 @@ const passport = require("passport");
 const cors = require("cors");
 // const cookieSession = require("cookie-session");
 const session = require("express-session");
+const MongoStore = require("connect-mongo")(session);
+const mongoose = require("mongoose");
 // const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
@@ -12,6 +14,7 @@ const mongooseSetup = require("./services/mongoose");
 mongooseSetup.setUpConnection();
 
 const auth = require("./api/auth");
+const room = require("./api/room");
 
 const app = express();
 
@@ -31,6 +34,7 @@ app.use(
   session({
     name: "session",
     secret: process.env.COOKIE_KEY,
+    store: new MongoStore({ mongooseConnection: mongoose.connection }),
     resave: true,
     saveUninitialized: true,
     cookie: {
@@ -54,6 +58,7 @@ app.use(passport.session());
 const passportSetup = require("./services/passport");
 
 app.use("/auth", auth);
+app.use("/room", room);
 // app.use((err, req, res, next) => {});
 
 const port = process.env.PORT || 3000;
