@@ -1,0 +1,178 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Palantir API docs",
+    "description":
+      "example: https://github.com/GenFirst/swagger-to-existing-nodejs-project/blob/master/backend/swagger.json",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "localhost:5001",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authorization endpoints"
+    },
+    {
+      "name": "Room",
+      "description": "Rooms endpoints"
+    }
+  ],
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/auth/google": {
+      "get": {
+        "tags": ["Auth"],
+        "produces": ["application/json"],
+        "summary":
+          "Google OAuth endpoint; Call this for getting authorization modal"
+      }
+    },
+    "/auth/google/callback": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Send access token to get profile",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "code",
+            "required": true,
+            "description": "code from /auth/google in browser's url",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Profile"
+            }
+          }
+        }
+      }
+    },
+    "/auth/profile": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Profile of authorized user",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "User object",
+            "schema": {
+              "$ref": "#/definitions/Profile"
+            }
+          },
+          "404": {
+            "description": "Auth is misssing; Check cookies"
+          }
+        }
+      }
+    },
+    "/room/list": {
+      "get": {
+        "tags": ["Room"],
+        "summary": "User's available rooms",
+        "responses": {
+          "200": {
+            "description": "Array of rooms",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Room"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/room/create": {
+      "post": {
+        "tags": ["Room"],
+        "summary": "Create new room",
+        "responses:": {
+          "200": {
+            "description": "Single room",
+            "schema": {
+              "$ref": "#/definitions/Room"
+            }
+          }
+        },
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "roomName",
+            "description": "specify room name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "Profile": {
+      "properties": {
+        "_id": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "googleId": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        }
+      }
+    },
+    "Room": {
+      "properties": {
+        "roomName": {
+          "type": "string",
+          "unique": true
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "date",
+                "default": "Date.now()"
+              },
+              "value": {
+                "type": "string"
+              },
+              "createdBy": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "usersId": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  }
+}

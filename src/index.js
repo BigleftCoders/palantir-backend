@@ -6,6 +6,9 @@ const cors = require("cors");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 const mongoose = require("mongoose");
+
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger.json");
 // const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
@@ -59,6 +62,8 @@ const passportSetup = require("./services/passport");
 
 app.use("/auth", auth);
 app.use("/room", room);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// app.use("/api/v1", router);
 // app.use((err, req, res, next) => {});
 
 const port = process.env.PORT || 3000;
