@@ -1,5 +1,8 @@
 const { Router } = require("express");
 const mongoose = require("mongoose");
+const bodymen = require("bodymen");
+// const querymen = require("querymen");
+
 require("./models/room");
 
 const Room = mongoose.model("Room");
@@ -9,33 +12,45 @@ const router = Router();
 router.get("/list", async (req, res) => {
   try {
     const userId = req.user.id;
-    const availabledRooms = await Room.find({ usersId: [userId] });
+    const availabledRooms = await Room.find({ users: [userId] }).populate(
+      "users",
+      "displayName _id"
+    );
+    console.log("availabledRooms", userId, availabledRooms);
     res.send(availabledRooms);
   } catch (error) {
     res.send(error);
   }
 });
 
-router.post("/create", async (req, res) => {
-  try {
-    console.log("post id res body:", req.body);
-    // const allowedUsersIds = req.body.userIds;
-    const { roomName } = req.body;
-    const newRoom = await new Room({
-      // eslint-disable-next-line
-      usersId: [req.user._id],
-      roomName,
-      messages: []
-    }).save();
-    res.send(newRoom);
-  } catch (error) {
-    res.end(error);
+router.post(
+  "/create",
+  bodymen.middleware({
+    roomName: {
+      type: String,
+      required: true,
+      minLength: 3
+    }
+  }),
+  async (req, res) => {
+    try {
+      const { roomName, description } = req.body;
+      const newRoom = await new Room({
+        // eslint-disable-next-line
+        users: [req.user._id],
+        description,
+        roomName
+      }).save();
+      res.send(newRoom);
+    } catch (error) {
+      res.end(error);
+    }
   }
-});
+);
 
 router.get("/:id", async (req, res) => {
   try {
-    console.log(res);
+    console.log(res.params);
   } catch (error) {
     res.send(error);
   }

@@ -1,19 +1,18 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  // TODO: add autoincrement id
-  // id: {
-  //   type: Number,
-  //   unique: true
-  // },
   googleId: {
     type: Number,
     unique: true
   },
   displayName: {
-    type: String
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    default: ""
   }
-  // TODO: add email
 });
 
 const user = mongoose.model("User", userSchema);

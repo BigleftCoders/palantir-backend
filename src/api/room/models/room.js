@@ -6,27 +6,16 @@ const roomSchema = new Schema({
     type: String,
     unique: true
   },
-  // id: {
-  //   type: Number,
-  //   unique: true
-  // },
-  messages: [
+  description: {
+    type: String,
+    default: ""
+  },
+  users: [
     {
-      date: {
-        type: Schema.Types.Date,
-        default: Date.now()
-      },
-      value: {
-        type: String
-      },
-      createdBy: {
-        userId: {
-          type: Number
-        }
-      }
+      type: Schema.Types.ObjectId,
+      ref: "User"
     }
-  ],
-  usersId: [String]
+  ]
 });
 
 const room = mongoose.model("Room", roomSchema);

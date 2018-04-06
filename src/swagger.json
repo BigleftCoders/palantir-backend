@@ -29,15 +29,15 @@
     "/auth/google": {
       "get": {
         "tags": ["Auth"],
-        "produces": ["application/json"],
         "summary":
-          "Google OAuth endpoint; Call this for getting authorization modal"
+          "Google OAuth endpoint; Call this for getting authorization modal; LOGIN or REGISTER from frontend!"
       }
     },
     "/auth/google/callback": {
       "get": {
         "tags": ["Auth"],
-        "summary": "Send access token to get profile",
+        "summary":
+          "Send access token to get profile; LOGIN or REGISTER from frontend!",
         "parameters": [
           {
             "in": "query",
@@ -114,6 +114,15 @@
             "name": "roomName",
             "description": "specify room name",
             "required": true,
+            "schema": {
+              "roomName": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "in": "body",
+            "name": "description",
             "schema": {
               "type": "string"
             }
