@@ -14,9 +14,8 @@ router.get("/list", async (req, res) => {
     const userId = req.user.id;
     const availabledRooms = await Room.find({ users: [userId] }).populate(
       "users",
-      "displayName _id"
+      "displayName"
     );
-    console.log("availabledRooms", userId, availabledRooms);
     res.send(availabledRooms);
   } catch (error) {
     res.send(error);
@@ -43,14 +42,18 @@ router.post(
       }).save();
       res.send(newRoom);
     } catch (error) {
-      res.end(error);
+      res.status(400);
+      res.send(error);
     }
   }
 );
 
 router.get("/:id", async (req, res) => {
   try {
-    console.log(res.params);
+    const { id } = req.params;
+    const foundedRoom = await Room.findOne({ roomId: id });
+    console.log("id log", req.params, req.query, foundedRoom);
+    res.send(foundedRoom);
   } catch (error) {
     res.send(error);
   }

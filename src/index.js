@@ -7,7 +7,7 @@ const MongoStore = require("connect-mongo")(session);
 const mongoose = require("mongoose");
 
 const swaggerUi = require("swagger-ui-express");
-const swaggerDocument = require("./swagger.json");
+const swaggerDocument = require("./swagger");
 require("dotenv").config();
 
 const app = express();

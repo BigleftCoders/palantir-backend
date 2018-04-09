@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 const messagesSchema = new Schema({
-  roomId: {
+  room: {
     type: Schema.Types.ObjectId,
     ref: "Room"
   },
@@ -24,7 +24,7 @@ const messagesSchema = new Schema({
   ]
 });
 
-const messages = mongoose.model("Room", messagesSchema);
+const messages = mongoose.model("RoomMessages", messagesSchema);
 
 module.exports = {
   messages
