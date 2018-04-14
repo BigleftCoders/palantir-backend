@@ -7,15 +7,12 @@ require("../api/auth/models/user");
 const User = mongoose.model("User");
 
 passport.serializeUser((user, done) => {
-  console.log("serializeUSer", user, user.id);
   done(null, user.id);
 });
 
 passport.deserializeUser(async (id, done) => {
   try {
-    console.log("deserializeUSer", id);
     const user = await User.findById(id);
-    console.log("deserializeUser", user);
     done(null, user);
   } catch (error) {
     done(error);
@@ -31,7 +28,6 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        console.log("accessToken", accessToken, "refreshTOken", refreshToken);
         const foundedUser = await User.findOne({
           googleId: profile.id
         });

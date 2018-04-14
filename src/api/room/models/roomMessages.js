@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 const messagesSchema = new Schema({
-  room: {
-    type: Schema.Types.ObjectId,
+  roomId: {
+    type: Number,
     ref: "Room"
   },
   messages: [

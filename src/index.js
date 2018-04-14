@@ -9,6 +9,7 @@ const mongoose = require("mongoose");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger");
 require("dotenv").config();
+require("module-alias/register");
 
 const app = express();
 

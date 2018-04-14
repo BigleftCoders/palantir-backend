@@ -1,16 +1,20 @@
 const httpServer = require("http");
 const socketIO = require("socket.io");
+const expressAppInstance = require("../").app;
+
+const server = httpServer.createServer(expressAppInstance);
+const io = socketIO(server);
 
 module.exports = {
-  setUpConnection(expressAppInstance) {
-    const server = httpServer.createServer(expressAppInstance);
-    const io = socketIO(server);
+  setUpConnection() {
     io.on("connection", socket => {
-      socket.on("hi", eve => socket.broadcast.emit("newMessage", eve));
+      socket.emit("newMessage", "welcome");
+      socket.on("hi", e => console.log("on hi", e));
     });
     const port = process.env.WS_PORT || 1337;
     server.listen(port, () => {
       console.log("websocket listening on", port);
     });
-  }
+  },
+  io
 };

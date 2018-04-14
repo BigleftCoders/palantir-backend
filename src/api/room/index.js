@@ -4,8 +4,10 @@ const bodymen = require("bodymen");
 // const querymen = require("querymen");
 
 require("./models/room");
+require("./models/roomMessages");
 
 const Room = mongoose.model("Room");
+const RoomMessages = mongoose.model("RoomMessages");
 
 const router = Router();
 
@@ -40,6 +42,10 @@ router.post(
         description,
         roomName
       }).save();
+      await new RoomMessages({
+        roomId: newRoom.roomId,
+        messages: []
+      }).save();
       res.send(newRoom);
     } catch (error) {
       res.status(400);
@@ -51,9 +57,16 @@ router.post(
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const foundedRoom = await Room.findOne({ roomId: id });
+    const foundedRoom = await Room.findOne({ roomId: id }).populate(
+      "users",
+      "displayName"
+    );
+    const messagesForRoom = await RoomMessages.findOne({ roomId: id });
     console.log("id log", req.params, req.query, foundedRoom);
-    res.send(foundedRoom);
+    res.send({
+      foundedRoom,
+      messagesForRoom
+    });
   } catch (error) {
     res.send(error);
   }
