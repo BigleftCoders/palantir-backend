@@ -14,7 +14,7 @@ require("module-alias/register");
 const app = express();
 
 // connect to Socket.io
-const socketSetup = require("./websockets/ws-config");
+const socketSetup = require("./websockets");
 
 socketSetup.setUpConnection(app);
 
