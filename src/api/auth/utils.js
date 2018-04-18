@@ -1,6 +1,7 @@
 const formatUserRes = originalUser => ({
   displayName: originalUser.displayName,
-  googleId: originalUser.googleId
+  googleId: originalUser.googleId,
+  userId: originalUser._id
 });
 
 const checkAuth = (req, res, next) => {
@@ -10,7 +11,6 @@ const checkAuth = (req, res, next) => {
   //   console.log(req[key]);
   // }
   if (req.isAuthenticated()) {
-    console.log("req.user", req.user);
     return next();
   }
   return res.status(401).send({

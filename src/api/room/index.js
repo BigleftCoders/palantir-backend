@@ -62,7 +62,6 @@ router.get("/:id", async (req, res) => {
       "displayName"
     );
     const messagesForRoom = await RoomMessages.findOne({ roomId: id });
-    console.log("id log", req.params, req.query, foundedRoom);
     res.send({
       foundedRoom,
       messagesForRoom

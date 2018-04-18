@@ -9,9 +9,11 @@ const io = socketIO(server);
 module.exports = {
   setUpConnection() {
     const port = process.env.WS_PORT || 1337;
-    subscribeOnChat(io);
     server.listen(port, () => {
       console.log("websocket listening on", port);
+      io.on("connect", socket => {
+        subscribeOnChat(io, socket.id);
+      });
     });
   }
 };
