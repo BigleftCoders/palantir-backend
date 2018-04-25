@@ -81,7 +81,12 @@ const subscribeOnChat = io => {
     socket.on("newMessage", async data => {
       try {
         console.log("new message", data);
-        chat.to(socket.room).emit("updateChat", data);
+        const senderData = {
+          createdAt: Date.now(),
+          userName: socket.username,
+          message: data
+        };
+        chat.to(socket.room).emit("updateChat", senderData);
         // console.log("newMessage", data, rooms[data.roomId]);
         // const newMessage = {
         //   value: data.value,
