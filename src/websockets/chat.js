@@ -24,10 +24,10 @@ const subscribeOnChat = io => {
         // data : { roomToJoin: number, userId: string like ObjectID }
         const roomToConnect = await Room.findOne({
           roomId: data.roomId
-        });
+        }).populate("users");
         const { roomId } = roomToConnect;
-        const allowedUser = roomToConnect.users.some(
-          id => id.toString() === data.userId
+        const allowedUser = roomToConnect.users.find(
+          user => user._id.toString() === data.userId
         );
         if (allowedUser) {
           const messagesForRoom = await RoomMessages.findOne({
@@ -54,7 +54,7 @@ const subscribeOnChat = io => {
               "SERVER",
               `${socket.username} has connected to this room`
             );
-          console.log("rooms", socket.rooms);
+          console.log("rooms", socket.rooms, socket.username);
 
           // const roomObj = {
           //   users: [data.userId],
@@ -80,7 +80,6 @@ const subscribeOnChat = io => {
 
     socket.on("newMessage", async data => {
       try {
-        console.log("new message", data);
         const senderData = {
           createdAt: Date.now(),
           userName: socket.username,
@@ -109,7 +108,7 @@ const subscribeOnChat = io => {
 
     socket.on("close", () => {
       socket.leave(socket.room);
-      socket.disconnect(true);
+      socket.disconnect(0);
       console.log("closed");
     });
   });
