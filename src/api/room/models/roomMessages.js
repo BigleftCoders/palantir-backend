@@ -12,12 +12,19 @@ const messagesSchema = new Schema({
         type: Schema.Types.Date,
         default: Date.now()
       },
-      value: {
+      message: {
         type: String
       },
       createdBy: {
         userId: {
-          type: Number
+          type: Schema.Types.ObjectId,
+          ref: "User"
+        },
+        userName: {
+          type: String
+        },
+        color: {
+          type: String
         }
       }
     }

@@ -38,16 +38,8 @@ const subscribeOnChat = io => {
           user => user._id.toString() === data.userId
         );
         if (allowedUser) {
-          const messagesForRoom = await RoomMessages.findOne({
-            roomId: data.roomId
-          });
-          if (!messagesForRoom) {
-            socket.emit(
-              "serverError",
-              "roomMessages for this room doesn't exists"
-            );
-          }
           socket.room = roomId;
+          socket.userId = data.userId;
           socket.username = allowedUser.displayName;
           socket.join(roomId);
           socket.emit(
@@ -74,13 +66,31 @@ const subscribeOnChat = io => {
 
     socket.on("newMessage", async data => {
       try {
+        const messageData = {
+          createdAt: Date.now(),
+          message: data,
+          createdBy: {
+            userName: socket.username,
+            userId: socket.userId,
+            color: "#0000ff"
+          }
+        };
         const senderData = {
           createdAt: Date.now(),
           userName: socket.username,
           message: data
         };
+        const rm = await RoomMessages.findOneAndUpdate(
+          {
+            roomId: socket.room
+          },
+          {
+            $push: { messages: messageData }
+          }
+        );
         chat.to(socket.room).emit("updateChat", senderData);
       } catch (error) {
+        throw error;
         // socket.emit("serverError", `message sending is failed${error}`);
         // throw error;
       }

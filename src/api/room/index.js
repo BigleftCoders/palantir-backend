@@ -64,7 +64,7 @@ router.get("/:id", async (req, res) => {
     const messagesForRoom = await RoomMessages.findOne({ roomId: id });
     res.send({
       foundedRoom,
-      messagesForRoom
+      messagesForRoom: messagesForRoom || []
     });
   } catch (error) {
     res.send(error);
