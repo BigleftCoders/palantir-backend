@@ -5,7 +5,12 @@ require("@/api/room/models/roomMessages");
 const Room = mongoose.model("Room");
 const RoomMessages = mongoose.model("RoomMessages");
 
-// Array<{ users: []}>
+const disconnect = socket => {
+  socket.leave(socket.room);
+  socket.disconnect();
+  console.log("closed");
+};
+
 const rooms = [];
 const subscribeOnChat = io => {
   console.log("Subscribe invoked");
@@ -16,15 +21,18 @@ const subscribeOnChat = io => {
     socket.on("message", message => {
       console.log("MESSAGE", message);
     });
-    socket.on("disconnect", () => {
-      socket.disconnect(true);
-    });
+    // socket.on("disconnect", () => {
+    //   disconnect(socket);
+    // });
+    // socket.on("disconnecting", () => {
+    // disconnect(socket);
+    // });
     socket.on("joinRoom", async data => {
       try {
-        // data : { roomToJoin: number, userId: string like ObjectID }
         const roomToConnect = await Room.findOne({
           roomId: data.roomId
         }).populate("users");
+        console.log("Joining room", data, roomToConnect);
         const { roomId } = roomToConnect;
         const allowedUser = roomToConnect.users.find(
           user => user._id.toString() === data.userId
@@ -54,20 +62,6 @@ const subscribeOnChat = io => {
               "SERVER",
               `${socket.username} has connected to this room`
             );
-          console.log("rooms", socket.rooms, socket.username);
-
-          // const roomObj = {
-          //   users: [data.userId],
-          //   messages: messagesForRoom.messages
-          // };
-          // if (rooms[roomId]) {
-          //   if (!rooms[roomId].users.some(user => user === data.userId)) {
-          //     rooms[roomId].users.push(data.userId);
-          //   }
-          // } else {
-          //   rooms[roomId] = roomObj;
-          // }
-          // socket.emit("joined", rooms[roomId]);
         } else {
           socket.emit("serverError", "user doesn't have acess to this chat");
         }
@@ -86,20 +80,6 @@ const subscribeOnChat = io => {
           message: data
         };
         chat.to(socket.room).emit("updateChat", senderData);
-        // console.log("newMessage", data, rooms[data.roomId]);
-        // const newMessage = {
-        //   value: data.value,
-        //   createdBy: {
-        //     userId: data.userId
-        //   }
-        // };
-        // rooms[data.roomId].messages.push(newMessage);
-        // console.log(rooms);
-        // await RoomMessages.update(
-        //   { roomId: data.roomId },
-        //   { $push: { messages: newMessage } }
-        // );
-        // socket.emit("newMessage", newMessage);
       } catch (error) {
         // socket.emit("serverError", `message sending is failed${error}`);
         // throw error;
@@ -107,9 +87,7 @@ const subscribeOnChat = io => {
     });
 
     socket.on("close", () => {
-      socket.leave(socket.room);
-      socket.disconnect(0);
-      console.log("closed");
+      disconnect(socket);
     });
   });
 };
