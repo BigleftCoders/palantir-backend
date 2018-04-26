@@ -61,7 +61,12 @@ router.get("/:id", async (req, res) => {
       "users",
       "displayName"
     );
-    const messagesForRoom = await RoomMessages.findOne({ roomId: id });
+    const messagesForRoom = await RoomMessages.findOne(
+      { roomId: id },
+      {
+        messages: { $slice: -100 }
+      }
+    );
     res.send({
       foundedRoom,
       messagesForRoom: messagesForRoom || []
