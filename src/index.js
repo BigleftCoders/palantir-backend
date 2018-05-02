@@ -24,6 +24,7 @@ mongooseSetup.setUpConnection();
 
 const auth = require("./api/auth");
 const room = require("./api/room");
+const invite = require("./api/invite");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -57,6 +58,7 @@ const passportSetup = require("./services/passport");
 
 app.use("/auth", auth);
 app.use("/room", room);
+app.use("/invite", invite);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // app.use("/api/v1", router);
 // app.use((err, req, res, next) => {});

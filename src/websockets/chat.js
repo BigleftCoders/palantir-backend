@@ -80,7 +80,7 @@ const subscribeOnChat = io => {
           userName: socket.username,
           message: data
         };
-        const rm = await RoomMessages.findOneAndUpdate(
+        await RoomMessages.findOneAndUpdate(
           {
             roomId: socket.room
           },
@@ -93,6 +93,13 @@ const subscribeOnChat = io => {
         throw error;
         // socket.emit("serverError", `message sending is failed${error}`);
         // throw error;
+      }
+    });
+    socket.on("newCoordinates", async data => {
+      try {
+        console.log("newCoordinates", data);
+      } catch (error) {
+        throw error;
       }
     });
 
