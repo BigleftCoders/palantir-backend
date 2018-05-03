@@ -26,11 +26,13 @@ router.get(
       const { inviteKey } = req.query;
       const { userId } = req.user;
       const token = jwt.verify(inviteKey, process.env.JWT_SECRET);
-      const userAdded = await room.findOneAndUpdate(
+      await room.findOneAndUpdate(
         { roomId: token.roomId },
         { $push: { users: userId } }
       );
-      res.send(token);
+      res.send({
+        roomId: token.roomId
+      });
     } catch (error) {
       res.send(error);
       throw error;
