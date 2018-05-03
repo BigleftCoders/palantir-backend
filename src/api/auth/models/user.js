@@ -12,6 +12,10 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     default: ""
+  },
+  color: {
+    type: String,
+    default: "#4496d8"
   }
 });
 

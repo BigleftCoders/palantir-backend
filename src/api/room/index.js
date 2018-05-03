@@ -59,7 +59,7 @@ router.get("/:id", async (req, res) => {
     const { id } = req.params;
     const foundedRoom = await Room.findOne({ roomId: id }).populate(
       "users",
-      "displayName"
+      "displayName color"
     );
     const messagesForRoom = await RoomMessages.findOne(
       { roomId: id },

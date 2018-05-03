@@ -1,6 +1,7 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 const mongoose = require("mongoose");
+const seedColor = require("seed-color");
 
 require("../api/auth/models/user");
 
@@ -35,9 +36,11 @@ passport.use(
         if (foundedUser) {
           done(null, foundedUser);
         } else {
+          const color = seedColor("kek").toHex();
           const created = await new User({
             googleId: profile.id,
-            displayName: profile.displayName
+            displayName: profile.displayName,
+            color
           }).save();
           done(null, created);
         }
