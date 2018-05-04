@@ -98,6 +98,7 @@ const subscribeOnChat = io => {
     socket.on("newCoordinates", async data => {
       try {
         console.log("newCoordinates", data);
+        chat.to(socket.room).emit("updateCoordinates", data);
       } catch (error) {
         throw error;
       }

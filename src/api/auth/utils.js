@@ -1,7 +1,8 @@
 const formatUserRes = originalUser => ({
   displayName: originalUser.displayName,
   googleId: originalUser.googleId,
-  userId: originalUser._id
+  userId: originalUser._id,
+  color: originalUser.color
 });
 
 const checkAuth = (req, res, next) => {
