@@ -71,14 +71,15 @@ const subscribeOnChat = io => {
           message: data,
           createdBy: {
             userName: socket.username,
-            userId: socket.userId,
-            color: "#0000ff"
+            userId: socket.userId
           }
         };
         const senderData = {
           createdAt: Date.now(),
           userName: socket.username,
-          message: data
+          message: data,
+          color: "#0000ff",
+          userId: socket.userId
         };
         await RoomMessages.findOneAndUpdate(
           {
