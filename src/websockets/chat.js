@@ -18,9 +18,7 @@ const subscribeOnChat = io => {
 
   chat.on("connection", socket => {
     socket.send(JSON.stringify({ msg: "user joined" }));
-    socket.on("message", message => {
-      console.log("MESSAGE", message);
-    });
+    socket.on("message", message => {});
     // socket.on("disconnect", () => {
     //   disconnect(socket);
     // });
@@ -32,7 +30,6 @@ const subscribeOnChat = io => {
         const roomToConnect = await Room.findOne({
           roomId: data.roomId
         }).populate("users");
-        console.log("Joining room", data, roomToConnect);
         const { roomId } = roomToConnect;
         const allowedUser = roomToConnect.users.find(
           user => user._id.toString() === data.userId
@@ -41,6 +38,7 @@ const subscribeOnChat = io => {
           socket.room = roomId;
           socket.userId = data.userId;
           socket.username = allowedUser.displayName;
+          socket.color = allowedUser.color;
           socket.join(roomId);
           socket.emit(
             "updateChat",
@@ -58,7 +56,6 @@ const subscribeOnChat = io => {
           socket.emit("serverError", "user doesn't have acess to this chat");
         }
       } catch (error) {
-        console.log("ERROR; handle this", error);
         socket.emit("serverError", "error");
         throw error;
       }
@@ -69,17 +66,9 @@ const subscribeOnChat = io => {
         const messageData = {
           createdAt: Date.now(),
           message: data,
-          createdBy: {
-            userName: socket.username,
-            userId: socket.userId
-          }
-        };
-        const senderData = {
-          createdAt: Date.now(),
           userName: socket.username,
-          message: data,
-          color: "#0000ff",
-          userId: socket.userId
+          userId: socket.userId,
+          color: socket.color
         };
         await RoomMessages.findOneAndUpdate(
           {
@@ -89,7 +78,7 @@ const subscribeOnChat = io => {
             $push: { messages: messageData }
           }
         );
-        chat.to(socket.room).emit("updateChat", senderData);
+        chat.to(socket.room).emit("updateChat", messageData);
       } catch (error) {
         throw error;
         // socket.emit("serverError", `message sending is failed${error}`);
@@ -98,7 +87,6 @@ const subscribeOnChat = io => {
     });
     socket.on("newCoordinates", async data => {
       try {
-        console.log("newCoordinates", data);
         chat.to(socket.room).emit("updateCoordinates", data);
       } catch (error) {
         throw error;

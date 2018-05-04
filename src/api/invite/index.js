@@ -26,6 +26,7 @@ router.get(
       const { inviteKey } = req.query;
       const { userId } = req.user;
       const token = jwt.verify(inviteKey, process.env.JWT_SECRET);
+      console.log("invite", userId, req.user);
       await room.findOneAndUpdate(
         { roomId: token.roomId },
         { $push: { users: userId } }

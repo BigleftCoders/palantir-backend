@@ -8,24 +8,22 @@ const messagesSchema = new Schema({
   },
   messages: [
     {
-      date: {
-        type: Schema.Types.Date,
+      createdAt: {
+        type: Number,
         default: Date.now()
       },
       message: {
         type: String
       },
-      createdBy: {
-        userId: {
-          type: Schema.Types.ObjectId,
-          ref: "User"
-        },
-        userName: {
-          type: String
-        },
-        color: {
-          type: String
-        }
+      userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
+      },
+      userName: {
+        type: String
+      },
+      color: {
+        type: String
       }
     }
   ]
