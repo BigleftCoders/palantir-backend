@@ -78,6 +78,7 @@ const subscribeOnChat = io => {
             $push: { messages: messageData }
           }
         );
+        console.log(data);
         chat.to(socket.room).emit("updateChat", messageData);
       } catch (error) {
         throw error;

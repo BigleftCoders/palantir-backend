@@ -36,7 +36,7 @@ passport.use(
         if (foundedUser) {
           done(null, foundedUser);
         } else {
-          const color = seedColor("kek").toHex();
+          const color = seedColor(Math.random()).toHex();
           const created = await new User({
             googleId: profile.id,
             displayName: profile.displayName,

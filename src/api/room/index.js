@@ -14,10 +14,10 @@ const router = Router();
 router.get("/list", async (req, res) => {
   try {
     const userId = req.user.id;
-    const availabledRooms = await Room.find({ users: [userId] }).populate(
-      "users",
-      "displayName"
-    );
+    const availabledRooms = await Room.find({
+      users: { $all: [userId] }
+    }).populate("users", "displayName");
+    console.log(availabledRooms);
     res.send(availabledRooms);
   } catch (error) {
     res.send(error);
