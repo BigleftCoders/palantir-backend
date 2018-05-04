@@ -24,16 +24,21 @@ router.get(
   async (req, res) => {
     try {
       const { inviteKey } = req.query;
-      const { userId } = req.user;
+      const { _id } = req.user;
       const token = jwt.verify(inviteKey, process.env.JWT_SECRET);
-      console.log("invite", userId, req.user);
-      await room.findOneAndUpdate(
-        { roomId: token.roomId },
-        { $push: { users: userId } }
-      );
-      res.send({
-        roomId: token.roomId
-      });
+      console.log("invite", req.user);
+      if (token && _id) {
+        await room.findOneAndUpdate(
+          { roomId: token.roomId },
+          { $push: { users: _id } }
+        );
+        res.send({
+          roomId: token.roomId
+        });
+      } else {
+        res.statusCode = 400;
+        res.send("token isnt valid or user doesnt exists");
+      }
     } catch (error) {
       res.send(error);
       throw error;
