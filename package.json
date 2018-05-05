@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon src",
     "test": "test",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "start": "nodemon src"
   },
   "repository": {
     "type": "git",
