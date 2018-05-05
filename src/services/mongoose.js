@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
-const URL = `mongodb://${process.env.MONGODB_HOST}:${
-  process.env.MONGODB_PORT
-}/palantir`;
+const URL = `mongodb://${process.env.MONGODB_CREDENTIALS}${
+  process.env.MONGODB_HOST
+}`;
 
 // const connection = mongoose.createConnection(URL);
 
