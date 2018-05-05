@@ -56,6 +56,9 @@ app.use(passport.session());
 // eslint-disable-next-line
 const passportSetup = require("./services/passport");
 
+app.use("/", (req, res) => {
+  res.send("server is running");
+});
 app.use("/auth", auth);
 app.use("/room", room);
 app.use("/invite", invite);
