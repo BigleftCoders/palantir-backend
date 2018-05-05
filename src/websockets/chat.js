@@ -27,6 +27,7 @@ const subscribeOnChat = io => {
     // });
     socket.on("joinRoom", async data => {
       try {
+        console.log("joinRoom");
         const roomToConnect = await Room.findOne({
           roomId: data.roomId
         }).populate("users");
@@ -45,6 +46,7 @@ const subscribeOnChat = io => {
             "SERVER",
             `You have connected to chat${roomId}`
           );
+          console.log("allowed", socket.room, socket.userId, socket.username);
           socket.broadcast
             .to(roomId)
             .emit(
@@ -78,7 +80,7 @@ const subscribeOnChat = io => {
             $push: { messages: messageData }
           }
         );
-        console.log(data);
+        console.log("messages", data, socket.room);
         chat.to(socket.room).emit("updateChat", messageData);
       } catch (error) {
         throw error;
