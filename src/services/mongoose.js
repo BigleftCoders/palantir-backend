@@ -8,6 +8,7 @@ const URL = `mongodb://${process.env.MONGODB_CREDENTIALS}${
 
 module.exports = {
   setUpConnection() {
+    // sdsa
     mongoose.Promise = global.Promise; // native promises
     mongoose.connect(URL);
     console.log("Connected to MongoDB by mongoose on ", URL);
