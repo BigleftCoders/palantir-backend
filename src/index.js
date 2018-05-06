@@ -1,4 +1,5 @@
 const express = require("express");
+const httpServer = require("http");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const cors = require("cors");
@@ -15,8 +16,6 @@ const app = express();
 
 // connect to Socket.io
 const socketSetup = require("./websockets");
-
-socketSetup.setUpConnection(app);
 
 const mongooseSetup = require("./services/mongoose");
 // connect to mongoDB
@@ -64,8 +63,13 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // app.use((err, req, res, next) => {});
 
 const port = process.env.PORT || 3000;
+const server = httpServer.createServer(app);
+const io = require("socket.io").listen(server);
 
-app.listen(port, () => console.log(`server run on ${port}`));
+server.listen(port, () => {
+  console.log("server run in port", process.env.PORT);
+  socketSetup.setUpConnection(io);
+});
 
 module.exports = {
   app

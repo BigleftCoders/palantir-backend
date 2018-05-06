@@ -11,20 +11,13 @@ const disconnect = socket => {
   console.log("closed");
 };
 
-const rooms = [];
 const subscribeOnChat = io => {
   console.log("Subscribe invoked");
   const chat = io.of("/chat");
-
+  setInterval(() => io.emit("time", new Date().toTimeString()), 1000);
   chat.on("connection", socket => {
     socket.send(JSON.stringify({ msg: "user joined" }));
     socket.on("message", message => {});
-    // socket.on("disconnect", () => {
-    //   disconnect(socket);
-    // });
-    // socket.on("disconnecting", () => {
-    // disconnect(socket);
-    // });
     socket.on("joinRoom", async data => {
       try {
         console.log("joinRoom");
