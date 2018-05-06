@@ -2,7 +2,7 @@ const { subscribeOnChat } = require("./chat");
 
 module.exports = {
   setUpConnection(io) {
-    console.log("websocket server going to run");
     subscribeOnChat(io);
+    setInterval(() => io.emit("time", new Date().toTimeString()), 1000);
   }
 };

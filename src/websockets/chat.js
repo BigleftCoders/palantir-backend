@@ -14,7 +14,7 @@ const disconnect = socket => {
 const subscribeOnChat = io => {
   console.log("Subscribe invoked");
   const chat = io.of("/chat");
-  setInterval(() => io.emit("time", new Date().toTimeString()), 1000);
+  // setInterval(() => io.emit("time", new Date().toTimeString()), 1000);
   chat.on("connection", socket => {
     socket.send(JSON.stringify({ msg: "user joined" }));
     socket.on("message", message => {});
