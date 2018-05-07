@@ -1,11 +1,14 @@
-const express = require("express");
-const httpServer = require("http");
-const bodyParser = require("body-parser");
-const passport = require("passport");
-const cors = require("cors");
-const session = require("express-session");
-const MongoStore = require("connect-mongo")(session);
-const mongoose = require("mongoose");
+import express from "express";
+import httpServer from "http";
+import bodyParser from "body-parser";
+import passport from "passport";
+import cors from "cors";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import mongoose from "mongoose";
+
+// configs
+import setUpConnection from "./services/mongoose";
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger");
@@ -13,13 +16,13 @@ require("dotenv").config();
 require("module-alias/register");
 
 const app = express();
+MongoStore(session);
 
 // connect to Socket.io
 const socketSetup = require("./websockets");
 
-const mongooseSetup = require("./services/mongoose");
 // connect to mongoDB
-mongooseSetup.setUpConnection();
+setUpConnection();
 
 const auth = require("./api/auth");
 const room = require("./api/room");
@@ -31,8 +34,9 @@ app.use(bodyParser.json());
 app.use(
   session({
     name: "session",
-    secret: process.env.COOKIE_KEY,
-    store: new MongoStore({ mongooseConnection: mongoose.connection }),
+    secret: process.env.COOKIE_KEY as string,
+    store: MongoStore({ mongooseConnection: mongoose.connection }),
+    // store: new MongoStore({ mongooseConnection: mongoose.connection }),
     resave: true,
     saveUninitialized: true,
     cookie: {
@@ -71,6 +75,4 @@ server.listen(port, () => {
   socketSetup.setUpConnection(io);
 });
 
-module.exports = {
-  app
-};
+export default app;
