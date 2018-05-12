@@ -1,17 +1,23 @@
-const { Router } = require("express");
-const bodymen = require("bodymen");
-const querymen = require("querymen");
-const jwt = require("jsonwebtoken");
+import { IUserDocument } from "api/auth/models/user";
+import { IRoom, IRoomDocument } from "api/room/models/room";
+import { Router } from "express";
+import bodymen from "bodymen";
+import querymen from "querymen";
+import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
+import { VerifyCallback } from "jsonwebtoken";
 
-const mongoose = require("mongoose");
+interface IToken {
+  roomId: string;
+}
 
 // require("./models/pendingInvites");
-require("../room/models/room");
+import "api/room/models/room";
 
 // const pendingInvites = mongoose.model("PendingInvites");
-const room = mongoose.model("Room");
+const room: mongoose.Model<IRoomDocument> = mongoose.model("Room");
 
-const router = Router();
+const router: Router = Router();
 
 router.get(
   "/verify",
@@ -24,11 +30,12 @@ router.get(
   async (req, res) => {
     try {
       const { inviteKey } = req.query;
-      const { _id } = req.user;
-      const token = jwt.verify(inviteKey, process.env.JWT_SECRET);
-      console.log("invite", req.user);
+      const { _id }: any = req.user;
+      const token: any = jwt.verify(inviteKey, process.env
+        .JWT_SECRET as string);
+      debugger;
       if (token && _id) {
-        await room.findOneAndUpdate(
+        const roomDocument: IRoom | null = await room.findOneAndUpdate(
           { roomId: token.roomId },
           { $push: { users: _id } }
         );
@@ -58,11 +65,11 @@ router.post(
       const { roomId } = req.body;
       // const threeDaysInFuture =
       //   Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 3;
-      const token = jwt.sign(
+      const token: string = jwt.sign(
         {
           roomId
         },
-        process.env.JWT_SECRET,
+        process.env.JWT_SECRET as string,
         { expiresIn: "3d" }
       );
       res.send({
@@ -74,4 +81,4 @@ router.post(
   }
 );
 
-module.exports = router;
+export default router;

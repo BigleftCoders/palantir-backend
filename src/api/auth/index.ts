@@ -1,8 +1,8 @@
-const { Router } = require("express");
-const passport = require("passport");
+import { Router } from "express";
+import passport from "passport";
+import { formatUserRes, checkAuth } from "./utils";
 
-const router = Router();
-const { formatUserRes, checkAuth } = require("./utils");
+const router: Router = Router();
 
 router.get("/test", (req, res) => {
   res.send({
@@ -18,12 +18,20 @@ router.get("/google", passport.authenticate("google", { scope: ["profile"] }));
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
 router.get("/google/callback", passport.authenticate("google"), (req, res) => {
-  res.send(formatUserRes(req.user));
+  if (req.user) {
+    res.send(formatUserRes(req.user));
+  } else {
+    res.send({
+      error: "user or authh is missing"
+    });
+  }
 });
 
 router.get("/profile", checkAuth, async (req, res) => {
   try {
-    res.send(formatUserRes(req.user));
+    if (req.user) {
+      res.send(formatUserRes(req.user));
+    }
   } catch (error) {
     res.send(error);
   }
@@ -37,4 +45,5 @@ router.get("/logout", async (req, res) => {
     throw error;
   }
 });
-module.exports = router;
+
+export default router;

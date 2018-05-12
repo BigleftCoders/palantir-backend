@@ -1,4 +1,6 @@
-module.exports = {
+// import { IUser } from "api/auth/models/user";
+
+export default {
   properties: {
     _id: {
       type: "string",
@@ -8,6 +10,9 @@ module.exports = {
       type: "string"
     },
     displayName: {
+      type: "string"
+    },
+    color: {
       type: "string"
     }
   }

@@ -4,38 +4,46 @@ import bodyParser from "body-parser";
 import passport from "passport";
 import cors from "cors";
 import session from "express-session";
-import MongoStore from "connect-mongo";
+import connectMongo from "connect-mongo";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+import swaggerUi from "swagger-ui-express";
+import io from "socket.io";
 
-// configs
-import setUpConnection from "./services/mongoose";
+import { Router } from "express";
 
-const swaggerUi = require("swagger-ui-express");
-const swaggerDocument = require("./swagger");
-require("dotenv").config();
-require("module-alias/register");
+import room from "api/room";
+import auth from "api/auth";
+import invite from "api/invite";
 
-const app = express();
-MongoStore(session);
+import setUpConnection from "@/websockets";
+import setUpMongoConnection from "@/services/mongoose";
+import passportMiddlewares from "@/services/passport";
+
+import swaggerDocument from "@/swagger";
+
+dotenv.config();
+
+const app: express.Application = express();
+const MongoStore: connectMongo.MongoStoreFactory = connectMongo(session);
 
 // connect to Socket.io
-const socketSetup = require("./websockets");
 
 // connect to mongoDB
-setUpConnection();
-
-const auth = require("./api/auth");
-const room = require("./api/room");
-const invite = require("./api/invite");
+setUpMongoConnection();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+passportMiddlewares();
 
 app.use(
   session({
     name: "session",
     secret: process.env.COOKIE_KEY as string,
-    store: MongoStore({ mongooseConnection: mongoose.connection }),
+    store: new MongoStore({
+      mongooseConnection: mongoose.connection
+    }),
     // store: new MongoStore({ mongooseConnection: mongoose.connection }),
     resave: true,
     saveUninitialized: true,
@@ -48,16 +56,13 @@ app.use(
 
 app.use(
   cors({
-    origin: [process.env.FRONTEND_BASE_URL],
+    origin: [process.env.FRONTEND_BASE_URL as string],
     credentials: true
   })
 );
 // initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
-
-// eslint-disable-next-line
-const passportSetup = require("./services/passport");
 
 app.use("/auth", auth);
 app.use("/room", room);
@@ -66,13 +71,13 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // app.use("/api/v1", router);
 // app.use((err, req, res, next) => {});
 
-const port = process.env.PORT || 3000;
-const server = httpServer.createServer(app);
-const io = require("socket.io").listen(server);
+const port: number | string = process.env.PORT || 3000;
+const server: httpServer.Server = httpServer.createServer(app);
 
 server.listen(port, () => {
+  const ioInstance: SocketIO.Server = io.listen(server);
   console.log("server run in port", process.env.PORT);
-  socketSetup.setUpConnection(io);
+  setUpConnection(ioInstance);
 });
 
 export default app;

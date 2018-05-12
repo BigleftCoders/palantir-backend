@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   "/room/list": {
     get: {
       tags: ["Room"],

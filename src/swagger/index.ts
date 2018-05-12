@@ -1,9 +1,9 @@
-const room = require("./room");
-const auth = require("./auth");
-const roomModel = require("./models/roomModel");
-const profileModel = require("./models/profileModel");
+import room from "./room";
+import auth from "./auth";
+import roomModel from "./models/roomModel";
+import profileModel from "./models/profileModel";
 
-module.exports = {
+export default {
   swagger: "2.0",
   info: {
     version: "1.0.0",

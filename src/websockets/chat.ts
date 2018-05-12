@@ -1,32 +1,45 @@
-const mongoose = require("mongoose");
-require("@/api/room/models/room");
-require("@/api/room/models/roomMessages");
+import { IUserModel } from "api/auth/models/user";
+import mongoose from "mongoose";
+import "api/room/models/room";
+import "api/room/models/roomMessages";
 
-const Room = mongoose.model("Room");
-const RoomMessages = mongoose.model("RoomMessages");
+// todo Room
+const Room: mongoose.Model<any> = mongoose.model("Room");
+const RoomMessages: mongoose.Model<any> = mongoose.model("RoomMessages");
 
-const disconnect = socket => {
+interface ISocket extends SocketIO.Socket {
+  room: string;
+  username: string;
+  userId: string;
+  color: string;
+}
+interface IJoinRoomData {
+  roomId: string;
+  userId: string;
+}
+
+const disconnect = (socket: ISocket) => {
   socket.leave(socket.room);
   socket.disconnect();
   console.log("closed");
 };
 
-const subscribeOnChat = io => {
+export const subscribeOnChat = (io: SocketIO.Server) => {
   console.log("Subscribe invoked");
   const chat = io.of("/chat");
   // setInterval(() => io.emit("time", new Date().toTimeString()), 1000);
-  chat.on("connection", socket => {
+  chat.on("connection", (socket: ISocket) => {
     socket.send(JSON.stringify({ msg: "user joined" }));
     socket.on("message", message => {});
-    socket.on("joinRoom", async data => {
+    socket.on("joinRoom", async (data: IJoinRoomData) => {
       try {
         console.log("joinRoom");
         const roomToConnect = await Room.findOne({
           roomId: data.roomId
         }).populate("users");
         const { roomId } = roomToConnect;
-        const allowedUser = roomToConnect.users.find(
-          user => user._id.toString() === data.userId
+        const allowedUser: IUserModel = roomToConnect.users.find(
+          (user: IUserModel) => user._id.toString() === data.userId
         );
         if (allowedUser) {
           socket.room = roomId;
@@ -39,7 +52,7 @@ const subscribeOnChat = io => {
             "SERVER",
             `You have connected to chat${roomId}`
           );
-          console.log("allowed", socket.room, socket.userId, socket.username);
+          // console.log("allowed", socket.room, socket.userId, socket.username);
           socket.broadcast
             .to(roomId)
             .emit(
@@ -93,8 +106,4 @@ const subscribeOnChat = io => {
       disconnect(socket);
     });
   });
-};
-
-module.exports = {
-  subscribeOnChat
 };

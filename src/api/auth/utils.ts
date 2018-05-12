@@ -1,11 +1,15 @@
-const formatUserRes = originalUser => ({
+interface IReq extends Express.Request {
+  isAuthenticated(): boolean;
+}
+
+export const formatUserRes = (originalUser: Express.User) => ({
   displayName: originalUser.displayName,
   googleId: originalUser.googleId,
   userId: originalUser._id,
   color: originalUser.color
 });
 
-const checkAuth = (req, res, next) => {
+export const checkAuth = (req: any, res: any, next: Function) => {
   // console.log("REQQqqqQQQQQ");
   // eslint-disable-next-line
   // for (const key in req) {
@@ -18,9 +22,4 @@ const checkAuth = (req, res, next) => {
     errors: req.session.errors,
     testError: "auth is missing"
   });
-};
-
-module.exports = {
-  formatUserRes,
-  checkAuth
 };

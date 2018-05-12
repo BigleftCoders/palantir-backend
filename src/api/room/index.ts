@@ -75,4 +75,4 @@ router.get("/:id", async (req, res) => {
     res.send(error);
   }
 });
-module.exports = router;
+export default router;
